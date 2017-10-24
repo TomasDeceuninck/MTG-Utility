@@ -1,14 +1,16 @@
+$script:MODULEROOT = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
+
 # Load Module settings file
 try {
-	$script:SETTINGS = ([xml](Get-Content "$PSScriptRoot\Settings.xml")).Settings
+	$script:SETTINGS = ([xml](Get-Content "$MODULEROOT\Settings.xml")).Settings
 } catch {
 	throw 'Could not load settings.xml file.'
 }
 
 # Get public and private function defenition files.
 # Sort to make sure files that start with '_' get loaded first
-$Private = @(Get-ChildItem -Path $PSScriptRoot\Private -Recurse -Filter "*.ps1") | Sort-Object Name
-$Public = @(Get-ChildItem -Path $PSScriptRoot\Public -Recurse -Filter "*.ps1") | Sort-Object Name
+$Private = @(Get-ChildItem -Path $MODULEROOT\Private -Recurse -Filter "*.ps1") | Sort-Object Name
+$Public = @(Get-ChildItem -Path $MODULEROOT\Public -Recurse -Filter "*.ps1") | Sort-Object Name
 
 # Dots source the private files
 foreach ($import in $Private) {
