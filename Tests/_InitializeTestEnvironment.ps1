@@ -16,12 +16,12 @@ $RootModule = "$PSScriptRoot\..\$ModuleName\$ModuleName.psm1"
 # the module from being imported again for each test file.
 
 if (-not (Get-Module -Name $ModuleName -ErrorAction SilentlyContinue) -or (!$SuppressImportModule)) {
-    # If we import the .psd1 file, Pester has issues where it detects multiple
-    # modules named MTG-Utility. Importing the .psm1 file seems to correct this.
+	# If we import the .psd1 file, Pester has issues where it detects multiple
+	# modules named MTG-Utility. Importing the .psm1 file seems to correct this.
 
-    # -Scope Global is needed when running tests from within a CI environment
-    Import-Module $RootModule -Scope Global -Force
+	# -Scope Global is needed when running tests from within a CI environment
+	Import-Module $RootModule -Scope Global -Force
 
-    # Set to true so we don't need to import it again for the next test
-    $global:SuppressImportModule = $true
+	# Set to true so we don't need to import it again for the next test
+	$global:SuppressImportModule = $true
 }
