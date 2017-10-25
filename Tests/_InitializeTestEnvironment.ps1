@@ -25,9 +25,3 @@ if (-not (Get-Module -Name $ModuleName -ErrorAction SilentlyContinue) -or (!$Sup
     # Set to true so we don't need to import it again for the next test
     $global:SuppressImportModule = $true
 }
-
-try {
-	$script:ModuleSettings = ([xml](Get-Content "$moduleRoot\Settings.xml")).Settings
-} catch {
-	throw 'Could not load settings.xml file.'
-}
