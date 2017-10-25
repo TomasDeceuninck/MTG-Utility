@@ -5,7 +5,7 @@ InModuleScope MTG-Utility {
 
 	Describe "Initialize-MTGDB" {
 
-		BeforeEach{
+		BeforeEach {
 			try {
 				Remove-Variable -Name MTGDB -Scope Global -ErrorAction Ignore
 				Remove-Variable -Name MTGSets -Scope Global -ErrorAction Ignore
