@@ -5,6 +5,12 @@ InModuleScope MTG-Utility {
 
 	Describe "Initialize-MTGDB" {
 
+		BeforeAll {
+			Mock Get-Content -Verifiable -ParameterFilter {$Path -eq (Join-Path $moduleRoot $SETTINGS.Resources.MTGJson.Path)} {
+				Write-Output $TestJson
+			}
+		}
+
 		BeforeEach {
 			try {
 				Remove-Variable -Name MTGDB -Scope Global -ErrorAction Ignore
@@ -14,9 +20,7 @@ InModuleScope MTG-Utility {
 			}
 		}
 
-		Mock Get-Content -Verifiable -ParameterFilter {$Path -eq (Join-Path $moduleRoot $SETTINGS.Resources.MTGJson.Path)} {
-			Write-Output $TestJson
-		}
+		#ToDo: Performance Test
 
 		It "Gets the content of the MTGJson" {
 			{ Initialize-MTGDB } | Should Not Throw
