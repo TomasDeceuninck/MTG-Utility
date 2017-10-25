@@ -16,22 +16,22 @@ function Get-WishlistForSet {
 	#>
 	[CmdletBinding()]
 	param (
-		# Specifies a path to one or more locations.
 		[Parameter(
-			Mandatory = $true,
-			Position = 0,
-			ParameterSetName = "ParameterSetName",
-			ValueFromPipeline = $true,
-			ValueFromPipelineByPropertyName = $true,
-			HelpMessage = "Path to one or more locations."
+			Mandatory = $true
 		)]
 		[ValidateNotNullOrEmpty()]
-		[System.String]
-		$WishList
+		[System.String[]] $WishList,
+		[Parameter(
+			Mandatory = $true
+		)]
+		[ValidateNotNullOrEmpty()]
+		[System.String]	$Set
 	)
 	begin {
+		Initialize-MTGDB
 	}
 	process {
+		$Global:MTGDB | Where-Object {$_.Name -in $WishList} | Where-Object {$Set -in $_.printings}
 	}
 	end {
 	}
