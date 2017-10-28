@@ -9,7 +9,7 @@ InModuleScope MTG-Utility {
 			Mock Get-Content -Verifiable -ParameterFilter {$Path -eq (Join-Path $moduleRoot $SETTINGS.Resources.MTGJson.Path)} {
 				Write-Output $TestJson
 			}
-			Mock Test-Path -Verifiable -ParameterFilter {$Path -eq $testWishlistPath} {
+			Mock Test-Path -Verifiable -ParameterFilter {$Path -eq $TestWishlistPath} {
 				return $true
 			}
 			Mock Import-Wishlist -ParameterFilter {$Path -eq $TestWishlistPath} {

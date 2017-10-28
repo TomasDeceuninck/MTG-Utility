@@ -354,7 +354,41 @@ $TestCardNames = @(
 	'Serum Visions'
 	'Thought-Knot Seer'
 )
-$TestWishlistPath = 'C:\RAZY\PATH'
+
+$TestImportCollectionPath = 'C:\RAZY\Test-Collection.txt'
+$TestImportCollectionName = 'TestCollection'
+$TestImportCollection = @(
+	'1 Lightning Bolt [M11]'
+	'2 Abrupt Decay [RTR]'
+	'Serum Visions  [MM3]'
+	' Thought-Knot Seer [OGW]'
+)
+$TestImportCollection_Incomplete = @(
+	'1 Lightning Bolt [M11]'
+	'2 Abrupt Decay [RTR]'
+	'Serum Visions'
+	' Thought-Knot Seer [OGW]'
+)
+$TestImportCollection_BadFormat = @(
+	'1 [M11] Lightning Bolt'
+	'2 Abrupt Decay [RTR]'
+	'Serum Visions  [MM3]'
+	' Thought-Knot Seer [OGW]'
+)
+$TestImportCollection_FakePrintings = @(
+	'1 Lightning Bolt [M15]'
+	'2 Abrupt Decay [RTR]'
+	'Serum Visions  [MM3]'
+	' Thought-Knot Seer [OGW]'
+)
+$TestImportCollection_FakeCards = @(
+	'1	Crazy Cool Fake Card, of The masters [M11]'
+	'2 Abrupt Decay [RTR]'
+	'Serum Visions  [MM3]'
+	' Thought-Knot Seer [OGW]'
+)
+
+$TestWishlistPath = 'C:\RAZY\MTGWishlist.txt'
 $TestWishlist = @(
 	'1 Lightning Bolt [pMPR]'
 	'2  Liliana of the Veil '
