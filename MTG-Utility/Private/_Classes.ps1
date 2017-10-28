@@ -1,0 +1,137 @@
+Class MTGCard {
+	[ValidateNotNullOrEmpty()]
+	[System.String] $Name
+	[System.String] $Set
+
+	# Constructor
+	MTGCard ([System.String] $Name) {
+		$this.Name = $Name
+	}
+	MTGCard ([System.String] $Name, [System.String] $Set) {
+		$this.Name = $Name
+		$this.Set = $Set
+	}
+
+	[System.Boolean] IsUniquelyIdentifiable() {
+		return (![System.String]::IsNullOrEmpty($this.Name) -and ![System.String]::IsNullOrEmpty($this.Set))
+	}
+
+	[System.Boolean] Equals($Card) {
+		return (($this.Name -like $Card.Name) -and ($this.Set -like $Card.Set))
+	}
+
+	[System.String] ToString() {
+		if ([System.String]::IsNullOrEmpty($this.Name)) {
+			return 'UNKNOWN'
+		} else {
+			if ([System.String]::IsNullOrEmpty($this.Set)) {
+				return $this.Name
+			} else {
+				return ('{0} [{1}]' -f $this.Name, $this.Set)
+			}
+		}
+	}
+}
+
+Class MTGCollectionItem {
+	hidden [MTGCard] $_Card = $($this | Add-Member ScriptProperty 'Card' {
+			# get
+			$this._Card
+		} {
+			# set
+			param ( $Card )
+			if ($Card.IsUniquelyIdentifiable()) {
+				$this._Card = $Card
+			} else {
+				throw ('MTGCard {0} is not uniquely identifable' -f $Card)
+			}
+		}
+	)
+	[ValidateNotNullOrEmpty()]
+	[System.Int32] $Amount
+
+	# Constructor
+	MTGCollectionItem ([MTGCard] $Card, [System.Int32] $Amount) {
+		$this.Card = $Card
+		$this.Amount = $Amount
+	}
+}
+
+Class MTGCollection {
+	[ValidateNotNullOrEmpty()]
+	[System.String] $Name
+	[ValidateNotNullOrEmpty()]
+	[System.Version] $Version
+	hidden [System.Collections.ArrayList] $Items = $($this | Add-Member ScriptProperty 'Cards' {
+			# get
+			[MTGCollectionItem[]]$this.Items
+		} {
+			# set
+			param ( $arg )
+			$this.Items = New-Object System.Collections.ArrayList(, $arg)
+		}
+	)
+
+	# Constructor
+	MTGCollection ([System.String] $Name, [System.Version] $Version) {
+		$this.Name = $Name
+		$this.Version = $Version
+		$this.Items = New-Object System.Collections.ArrayList
+	}
+	MTGCollection ([System.String] $Name, [System.Version] $Version, [MTGCollectionItem[]] $Cards) {
+		$this.Name = $Name
+		$this.Version = $Version
+		$this.Cards = $Cards
+	}
+
+	[MTGCollectionItem[]] Get([MTGCard] $Card) {
+		return $this.Items.Where( {$_.Card.Equals($Card)})
+	}
+
+	Add([MTGCard] $Card, [System.Int32] $Amount) {
+		$existingItem = $this.Items.Where( {$_.Card.Equals($Card)})
+		$totalAmmount = $Amount
+		foreach ($item in $existingItem) {
+			$totalAmmount += $item.Amount
+			$this.Items.Remove($item)
+		}
+		$this.Items.Add([MTGCollectionItem]::New($Card, $totalAmmount))
+	}
+	Add([MTGCard] $Card) {
+		$this.Add($Card, 1)
+	}
+
+	Remove([MTGCard] $Card, [System.Int32] $Amount) {
+		$existingItem = $this.Items.Where( {$_.Card.Equals($Card)})
+		$totalAmmount = - $Amount
+		foreach ($item in $existingItem) {
+			$totalAmmount += $item.Amount
+			$this.Items.Remove($item)
+		}
+		if ($totalAmmount -gt 0) {
+			$this.Items.Add([MTGCollectionItem]::New($Card, $totalAmmount))
+		}
+	}
+	Remove([MTGCard] $Card) {
+		$this.Remove($Card, 1)
+	}
+
+	RemoveAll([MTGCard] $Card) {
+		$existingItem = $this.Items.Where( {$_.Card.Equals($Card)})
+		foreach ($item in $existingItem) {
+			$this.Items.Remove($item)
+		}
+	}
+	RemoveAll([System.Boolean] $Confirm) {
+		if (!$Confirm) {
+			$user = Read-Host -Prompt 'Are you sure you want to remove all cards from this collection? (y/N) '
+			$Confirm = ($user -like 'y')
+		}
+		if ($Confirm) {
+			$this.Items = New-Object System.Collections.ArrayList
+		}
+	}
+	RemoveAll() {
+		$this.RemoveAll($false)
+	}
+}
