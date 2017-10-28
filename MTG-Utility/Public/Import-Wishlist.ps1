@@ -26,15 +26,22 @@ function Import-Wishlist {
 		Initialize-MTGDB
 	}
 	process {
-		Get-Content -Path $Path | ForEach-Object {
+		$import = Get-Content -Path $Path
+		# Progress reporting
+		$progressTotal = $import.Count
+		$progressCurrent = 0
+		Write-Progress -Activity 'Importing Wishlist' -Status 'Processing' -PercentComplete ([Math]::Round(($progressCurrent/$progressTotal)*100))
+		$import | ForEach-Object {
+			Write-Progress -Activity 'Importing Wishlist' -Status ('Processing ({0} of {1})' -f ++$progressCurrent,$progressTotal) -PercentComplete ([Math]::Round(($progressCurrent/$progressTotal)*100)) -CurrentOperation ('{0}' -f $_)
 			if($_ -match [regex]$SETTINGS.Files.Wishlist.Pattern){
 				$Amount = $Matches[1]
 				$Name = $Matches[3].Trim()
 				$Set = $Matches[5]
 				if($Name){
-					if($Global:MTGDB | Where-Object {$_.Name -like $Name}){
+					$mtgDBWithName = $Global:MTGDB | Where-Object {$_.Name -like $Name}
+					if($mtgDBWithName){
 						if($Set){
-							if($Global:MTGDB | Where-Object {$_.Name -like $Name} | Where-Object {$Set -in $_.printings}){
+							if($mtgDBWithName | Where-Object {$Set -in $_.printings}){
 								if($Amount){
 									[MTGWishlistItem]::New($Name,$Amount,$Set)
 								} else {
@@ -47,7 +54,7 @@ function Import-Wishlist {
 							if($Amount){
 								[MTGWishlistItem]::New($Name,$Amount)
 							} else {
-								[MTGWishlistItem]::New($Name,$Amount)
+								[MTGWishlistItem]::New($Name)
 							}
 						}
 					} else {
@@ -60,6 +67,7 @@ function Import-Wishlist {
 				throw 'Not all lines in wishlist match the required pattern.'
 			}
 		}
+		Write-Progress -Activity 'Importing Wishlist' -Status 'Completed' -Completed
 	}
 	end {
 	}
