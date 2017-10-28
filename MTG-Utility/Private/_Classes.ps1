@@ -95,7 +95,9 @@ Class MTGCollection {
 			$totalAmmount += $item.Amount
 			$this.Items.Remove($item)
 		}
-		$this.Items.Add([MTGCollectionItem]::New($Card, $totalAmmount))
+		if($totalAmmount -gt 0){
+			$this.Items.Add([MTGCollectionItem]::New($Card, $totalAmmount))
+		}
 	}
 	Add([MTGCard] $Card) {
 		$this.Add($Card, 1)
