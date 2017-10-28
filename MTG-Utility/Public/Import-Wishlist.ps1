@@ -29,10 +29,11 @@ function Import-Wishlist {
 		$import = Get-Content -Path $Path
 		# Progress reporting
 		$progressTotal = $import.Count
+		$progressStartTime = Get-Date
 		$progressCurrent = 0
-		Write-Progress -Activity 'Importing Wishlist' -Status 'Processing' -PercentComplete ([Math]::Round(($progressCurrent/$progressTotal)*100))
+		Write-Progress -Activity 'Importing Wishlist' -Status 'Processing' -PercentComplete 0
 		$import | ForEach-Object {
-			Write-Progress -Activity 'Importing Wishlist' -Status ('Processing ({0} of {1})' -f ++$progressCurrent,$progressTotal) -PercentComplete ([Math]::Round(($progressCurrent/$progressTotal)*100)) -CurrentOperation ('{0}' -f $_)
+			Write-Progress -Activity 'Importing Wishlist' -Status ('Processing ({0} of {1})' -f ++$progressCurrent,$progressTotal) -PercentComplete ([Math]::Round(($progressCurrent/$progressTotal)*100)) -CurrentOperation ('{0}' -f $_) -SecondsRemaining (((((Get-Date)-$progressStartTime).TotalSeconds)/$progressCurrent)*($progressTotal-$progressCurrent))
 			if($_ -match [regex]$SETTINGS.Files.Wishlist.Pattern){
 				$Amount = $Matches[1]
 				$Name = $Matches[3].Trim()

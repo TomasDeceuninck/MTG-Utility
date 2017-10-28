@@ -30,7 +30,14 @@ function Import-Collection {
 	}
 	process {
 		$collection = [MTGCollection]::New($Name,[System.Version]$SETTINGS.Files.Collection.CurrentVersion)
-		Get-Content -Path $Path | ForEach-Object {
+		$import = Get-Content -Path $Path
+		# Progress reporting
+		$progressTotal = $import.Count
+		$progressStartTime = Get-Date
+		$progressCurrent = 0
+		Write-Progress -Activity 'Importing Collection' -Status 'Processing' -PercentComplete 0
+		$import | ForEach-Object {
+			Write-Progress -Activity 'Importing Wishlist' -Status ('Processing ({0} of {1})' -f ++$progressCurrent,$progressTotal) -PercentComplete ([Math]::Round(($progressCurrent/$progressTotal)*100)) -CurrentOperation ('{0}' -f $_) -SecondsRemaining (((((Get-Date)-$progressStartTime).TotalSeconds)/$progressCurrent)*($progressTotal-$progressCurrent))
 			if($_ -match [regex]$SETTINGS.Files.Collection.Pattern){
 				$Amount = $Matches[1]
 				$Name = $Matches[3].Trim()
