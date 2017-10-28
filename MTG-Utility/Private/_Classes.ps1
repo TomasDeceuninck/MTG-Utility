@@ -135,3 +135,31 @@ Class MTGCollection {
 		$this.RemoveAll($false)
 	}
 }
+
+Class MTGWishlistItem {
+	[ValidateNotNullOrEmpty()]
+	[System.Int32] $Amount
+	[ValidateNotNullOrEmpty()]
+	[System.String] $Name
+	[System.String] $Set
+
+	# Constructor
+	MTGWishlistItem ([System.String] $Name) {
+		$this.Name = $Name
+		$this.Amount = 1
+	}
+	MTGWishlistItem ([System.String] $Name, [System.String] $Set) {
+		$this.Name = $Name
+		$this.Amount = 1
+		$this.Set = $Set
+	}
+	MTGWishlistItem ([System.String] $Name, [System.Int32] $Amount) {
+		$this.Name = $Name
+		$this.Amount = $Amount
+	}
+	MTGWishlistItem ([System.String] $Name, [System.Int32] $Amount, [System.String] $Set) {
+		$this.Name = $Name
+		$this.Amount = $Amount
+		$this.Set = $Set
+	}
+}

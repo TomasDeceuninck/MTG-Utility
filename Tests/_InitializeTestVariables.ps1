@@ -348,9 +348,34 @@ $TestJson = @"
 "@
 $TestCardCount = 6
 $TestSets = @('LEA', 'LEB', '2ED', 'CED', 'CEI', '3ED', '4ED', 'pJGP', 'ATH', 'BTD', 'pMPR', 'MED', 'M10', 'M11', 'PD2', 'MM2', 'E01', 'pARL', 'pFNM', '5DN', 'CN2', 'MM3', 'ISD', 'pWCQ', 'RTR', 'OGW')
-$TestWishlist = @(
+$TestCardNames = @(
 	'Lightning Bolt'
 	'Liliana of the Veil'
 	'Serum Visions'
 	'Thought-Knot Seer'
+)
+$TestWishlistPath = 'C:\RAZY\PATH'
+$TestWishlist = @(
+	'1 Lightning Bolt [pMPR]'
+	'2  Liliana of the Veil '
+	'Serum Visions  [MM3]'
+	' Thought-Knot Seer'
+)
+$TestWishlist_BadFormat = @(
+	'1	Lightning Bolt [pMPR]'
+	'Liliana of the Veil 2'
+	'[MM3] Serum Visions  '
+	' Thought-Knot Seer'
+)
+$TestWishlist_FakePrintings = @(
+	'1	Lightning Bolt [M15]'
+	'2  Liliana of the Veil' 
+	'Serum Visions  [MM2]'
+	' Thought-Knot Seer'
+)
+$TestWishlist_FakeCards = @(
+	'1	Crazy Cool Fake Card, of The masters'
+	'2  Liliana of the Veil '
+	'Serum Visions  [MM2]'
+	' Thought-Knot Seer'
 )
