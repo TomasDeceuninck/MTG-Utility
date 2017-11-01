@@ -64,37 +64,33 @@ InModuleScope MTG-Utility {
 			It 'Has no empty constructor' {
 				{[MTGCollection]::New()} | Should Throw
 			}
-			It 'Has a Name and Version constructor' {
+			It 'Has a Name constructor' {
 				{
 					$name = 'Collection'
-					$version = [System.Version]'0.1'
-					$collection = [MTGCollection]::New($name, $version)
+					$collection = [MTGCollection]::New($name)
 					$collection.Name | Should Be $name
-					$collection.Version | Should Be $version
 					$collection.Cards | Should Be $null
-			} | Should Not Throw
+				} | Should Not Throw
 			}
-			It 'Has a Name, Version, and MTGCollectionItem[] constructor' {
+			It 'Has a Name and MTGCollectionItem[] constructor' {
 				{
 					$name = 'Collection'
-					$version = [System.Version]'0.1'
 					$cards = @(
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 1)
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
 					)
-					$collection = [MTGCollection]::New($name, $version, $cards)
+					$collection = [MTGCollection]::New($name, $cards)
 					$collection.Name | Should Be $name
-					$collection.Version | Should Be $version
 					$collection.Cards | Should Be $cards
 				} | Should Not Throw
 			}
 		}
 		Context 'Cards' {
 			It 'Has a Cards parameter that returns an MTGCollectionItem[]' {
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1', @(
-					[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 1)
-					[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
-				))
+				$collection = [MTGCollection]::New('Collection', @(
+						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 1)
+						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
+					))
 				, $collection.Cards | Should BeOfType 'System.Object[]'
 				$collection.Cards | ForEach-Object {
 					$_.GetType().Name | Should Be 'MTGCollectionItem'
@@ -103,7 +99,7 @@ InModuleScope MTG-Utility {
 		}
 		Context 'Add' {
 			It 'Can Add a new card to an empty collection' {
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1')
+				$collection = [MTGCollection]::New('Collection')
 				$card = [MTGCard]::New($TestCardNames[0], $TestSets[0])
 				$collection.Cards.Count | Should Be 0
 				{$collection.Add($card)} | Should Not Throw
@@ -112,7 +108,7 @@ InModuleScope MTG-Utility {
 				$collection.Cards[0].Amount | Should be 1
 			}
 			It 'Can Add multiple copies of a new card to an empty collection' {
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1')
+				$collection = [MTGCollection]::New('Collection')
 				$card = [MTGCard]::New($TestCardNames[0], $TestSets[0])
 				$collection.Cards.Count | Should Be 0
 				{$collection.Add($card, 2)} | Should Not Throw
@@ -121,7 +117,7 @@ InModuleScope MTG-Utility {
 				$collection.Cards[0].Amount | Should be 2
 			}
 			It 'Can Add a new card to an existing collection' {
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1', @(
+				$collection = [MTGCollection]::New('Collection', @(
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 1)
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
 					))
@@ -133,7 +129,7 @@ InModuleScope MTG-Utility {
 				$collection.Get($card).Amount | Should be 1
 			}
 			It 'Can Add a copy of card already in a collection' {
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1', @(
+				$collection = [MTGCollection]::New('Collection', @(
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 1)
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
 					))
@@ -145,7 +141,7 @@ InModuleScope MTG-Utility {
 				$collection.Get($card).Amount | Should be 2
 			}
 			It 'Can Add multiple copies of a card already in a collection' {
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1', @(
+				$collection = [MTGCollection]::New('Collection', @(
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 1)
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
 					))
@@ -159,7 +155,7 @@ InModuleScope MTG-Utility {
 		}
 		Context 'Remove' {
 			It 'Can Remove a card from an existing collection' {
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1', @(
+				$collection = [MTGCollection]::New('Collection', @(
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 1)
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
 					))
@@ -170,7 +166,7 @@ InModuleScope MTG-Utility {
 				$collection.Get($card) | Should Be $null
 			}
 			It 'Can Remove cards from an empty collection' {
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1')
+				$collection = [MTGCollection]::New('Collection')
 				$card = [MTGCard]::New($TestCardNames[0], $TestSets[0])
 				$collection.Cards | Should Be $null
 				{$collection.Remove($card)} | Should Not Throw
@@ -178,7 +174,7 @@ InModuleScope MTG-Utility {
 				$collection.Get($card) | Should Be $null
 			}
 			It 'Can Remove multiple copies of a card from an existing collection' {
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1', @(
+				$collection = [MTGCollection]::New('Collection', @(
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 2)
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
 					))
@@ -191,7 +187,7 @@ InModuleScope MTG-Utility {
 		}
 		Context 'RemoveAll' {
 			It 'Can Remove All copies of a specific card from a collection' {
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1', @(
+				$collection = [MTGCollection]::New('Collection', @(
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 2)
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
 					))
@@ -203,7 +199,7 @@ InModuleScope MTG-Utility {
 			}
 			It 'Asks user approval before removing All Cards from the collection' {
 				Mock Read-Host -Verifiable {return 'y'}
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1', @(
+				$collection = [MTGCollection]::New('Collection', @(
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 2)
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
 					))
@@ -214,7 +210,7 @@ InModuleScope MTG-Utility {
 			}
 			It 'Does not asks user approval before removing All Cards from the collection when confirmation is given' {
 				Mock Read-Host -Verifiable {return 'y'}
-				$collection = [MTGCollection]::New('Collection', [System.Version]'0.1', @(
+				$collection = [MTGCollection]::New('Collection', @(
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[0]), 2)
 						[MTGCollectionItem]::New([MTGCard]::New($TestCardNames[0], $TestSets[2]), 1)
 					))

@@ -60,8 +60,6 @@ Class MTGCollectionItem {
 Class MTGCollection {
 	[ValidateNotNullOrEmpty()]
 	[System.String] $Name
-	[ValidateNotNullOrEmpty()]
-	[System.Version] $Version
 	hidden [System.Collections.ArrayList] $Items = $($this | Add-Member ScriptProperty 'Cards' {
 			# get
 			[MTGCollectionItem[]]$this.Items
@@ -73,14 +71,12 @@ Class MTGCollection {
 	)
 
 	# Constructor
-	MTGCollection ([System.String] $Name, [System.Version] $Version) {
+	MTGCollection ([System.String] $Name) {
 		$this.Name = $Name
-		$this.Version = $Version
 		$this.Items = New-Object System.Collections.ArrayList
 	}
-	MTGCollection ([System.String] $Name, [System.Version] $Version, [MTGCollectionItem[]] $Cards) {
+	MTGCollection ([System.String] $Name, [MTGCollectionItem[]] $Cards) {
 		$this.Name = $Name
-		$this.Version = $Version
 		$this.Cards = $Cards
 	}
 
@@ -95,7 +91,7 @@ Class MTGCollection {
 			$totalAmmount += $item.Amount
 			$this.Items.Remove($item)
 		}
-		if($totalAmmount -gt 0){
+		if ($totalAmmount -gt 0) {
 			$this.Items.Add([MTGCollectionItem]::New($Card, $totalAmmount))
 		}
 	}

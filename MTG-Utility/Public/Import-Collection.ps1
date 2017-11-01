@@ -18,55 +18,63 @@ function Import-Collection {
 		[Parameter(
 			Mandatory = $true
 		)]
-		[ValidateScript({Test-Path $_})]
-		[System.String] $Path,
-		[Parameter(
-			Mandatory = $true
-		)]
-		[System.String] $Name
+		[ValidateScript( {Test-Path $_})]
+		[System.String] $Path
 	)
 	begin {
 		Initialize-MTGDB
 	}
 	process {
-		$collection = [MTGCollection]::New($Name,[System.Version]$SETTINGS.Files.Collection.CurrentVersion)
-		$import = Get-Content -Path $Path
-		# Progress reporting
-		$progressTotal = $import.Count
-		$progressStartTime = Get-Date
-		$progressCurrent = 0
 		Write-Progress -Activity 'Importing Collection' -Status 'Processing' -PercentComplete 0
-		$import | ForEach-Object {
-			Write-Progress -Activity 'Importing Wishlist' -Status ('Processing ({0} of {1})' -f ++$progressCurrent,$progressTotal) -PercentComplete ([Math]::Round(($progressCurrent/$progressTotal)*100)) -CurrentOperation ('{0}' -f $_) -SecondsRemaining (((((Get-Date)-$progressStartTime).TotalSeconds)/$progressCurrent)*($progressTotal-$progressCurrent))
-			if($_ -match [regex]$SETTINGS.Files.Collection.Pattern){
-				$Amount = $Matches[1]
-				$Name = $Matches[3].Trim()
-				$Set = $Matches[5]
-				if($Name){
-					if($Global:MTGDB | Where-Object {$_.Name -like $Name}){
-						if($Set){
-							if($Global:MTGDB | Where-Object {$_.Name -like $Name} | Where-Object {$Set -in $_.printings}){
-								if($Amount){
-									$collection.Add([MTGCard]::New($Name,$Set),$Amount)
-								} else {
-									$collection.Add([MTGCard]::New($Name,$Set),1)
+		try {
+			$import = Get-Content -Path $Path | ConvertFrom-Json
+		} catch {
+			throw 'Something went wrong importing your collection file'
+		}
+		if ($import.PSObject.Properties.Name -contains 'Version') {
+			if ([System.Version]$import.version -lt [System.Version]$SETTINGS.Files.Collection.MinimumRequiredVersion) {
+				throw ('The selected collection has version {0} which is no longer supported (Minimum Required Version = {1}' -f [System.Version]$import.version, [System.Version]$SETTINGS.Files.Collection.MinimumRequiredVersion)
+			} else {
+				if ($import.PSObject.Properties.Name -contains 'Name') {
+					$collection = [MTGCollection]::New($import.Name)
+					if ($import.PSObject.Properties.Name -contains 'Cards') {
+						$progressTotal = $import.Cards.Count
+						$progressStartTime = Get-Date
+						$progressCurrent = 0
+						foreach ($card in $import.Cards) {
+							Write-Progress -Activity 'Importing Collection' -Status ('Processing ({0} of {1})' -f ++$progressCurrent, $progressTotal) -PercentComplete ([Math]::Round(($progressCurrent / $progressTotal) * 100)) -CurrentOperation ('{0}' -f $_) -SecondsRemaining (((((Get-Date) - $progressStartTime).TotalSeconds) / $progressCurrent) * ($progressTotal - $progressCurrent))
+							if (($card.PSObject.Properties.Name -contains 'Card') -and
+								($card.PSObject.Properties.Name -contains 'Amount')) {
+								if ($card.Card -match [regex]$SETTINGS.Files.Collection.Pattern) {
+									try {
+										$Name = [System.String]$Matches[1]
+										$Set = [System.String]$Matches[3]
+										$Amount = [System.Int32]$card.Amount
+									} catch {
+										throw 'Something went wrong casting card parameters'
+									}
+									$mtgDBWithName = $Global:MTGDB | Where-Object {$_.Name -like $Name}
+									if ($mtgDBWithName) {
+										if ($mtgDBWithName | Where-Object {$Set -in $_.printings}) {
+											$collection.Add([MTGCard]::New($Name, $Set), $Amount)
+										} else {
+											throw ('{0} was never printed in {1}' -f $Name, $Set)
+										}
+									} else {
+										throw ('{0} does not exist in MTGDB' -f $Name)
+									}
 								}
-							} else {
-								throw ('{0} was never printed in {1}' -f $Name,$Set)
 							}
-						} else {
-							throw ('A Set is required for a card. "{0}"' -f $_)
 						}
-					} else {
-						throw ('{0} does not exist in MTGDB' -f $Name)
 					}
 				} else {
-					throw ('A Name is required for a card. "{0}"' -f $_)
+					throw 'Name propertie does not exist for selected collection'
 				}
-			} else {
-				throw 'Not all lines in wishlist match the required pattern.'
 			}
+		} else {
+			throw 'Version propertie does not exist for selected collection'
 		}
+		Write-Progress -Activity 'Importing Collection' -Status 'Completed' -Completed
 		$collection
 	}
 	end {

@@ -11,7 +11,10 @@
 		</Wishlist>
 		<Collection>
 			<CurrentVersion>0.1</CurrentVersion>
-			<Pattern>^([\s]*([0-9]+)[\s]+)?([\s]*[^\[\]]+)([\s]+\[([0-9a-zA-Z]+)\])[\s]*$</Pattern>
+			<MinimumRequiredVersion>0.1</MinimumRequiredVersion>
+			<Pattern>^([^\[\]]+)([\s]+\[([0-9a-zA-Z]+)\])$</Pattern>
+			<DefaultFileName>Collection</DefaultFileName>
+			<DefaultFileExtension>.mtgc</DefaultFileExtension>
 		</Collection>
 	</Files>
 </Settings>

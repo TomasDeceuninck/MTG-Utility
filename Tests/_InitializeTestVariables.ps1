@@ -305,43 +305,43 @@ $TestJson = @"
 		"cmc": 4,
 		"type": "Creature — Eldrazi",
 		"types": [
-		"Creature"
+			"Creature"
 		],
 		"subtypes": [
-		"Eldrazi"
+			"Eldrazi"
 		],
 		"text": "({C} represents colorless mana.)\nWhen Thought-Knot Seer enters the battlefield, target opponent reveals his or her hand. You choose a nonland card from it and exile that card.\nWhen Thought-Knot Seer leaves the battlefield, target opponent draws a card.",
 		"power": "4",
 		"toughness": "4",
 		"imageName": "thought-knot seer",
 		"printings": [
-		"OGW"
+			"OGW"
 		],
 		"legalities": [
-		{
-			"format": "Battle for Zendikar Block",
-			"legality": "Legal"
-		},
-		{
-			"format": "Commander",
-			"legality": "Legal"
-		},
-		{
-			"format": "Legacy",
-			"legality": "Legal"
-		},
-		{
-			"format": "Modern",
-			"legality": "Legal"
-		},
-		{
-			"format": "Standard",
-			"legality": "Legal"
-		},
-		{
-			"format": "Vintage",
-			"legality": "Legal"
-		}
+			{
+				"format": "Battle for Zendikar Block",
+				"legality": "Legal"
+			},
+			{
+				"format": "Commander",
+				"legality": "Legal"
+			},
+			{
+				"format": "Legacy",
+				"legality": "Legal"
+			},
+			{
+				"format": "Modern",
+				"legality": "Legal"
+			},
+			{
+				"format": "Standard",
+				"legality": "Legal"
+			},
+			{
+				"format": "Vintage",
+				"legality": "Legal"
+			}
 		]
 	}
 }
@@ -354,6 +354,33 @@ $TestCardNames = @(
 	'Serum Visions'
 	'Thought-Knot Seer'
 )
+
+$TestCollectionName = 'TestCollection'
+$TestCollectionFilePath = 'TestDrive:\testCollection.mtgc'
+$TestCollectionFile = @"
+{
+    "Name":  "TestCollection",
+    "Version":  "0.1",
+    "Cards":  [
+                  {
+                      "Card":  "Abrupt Decay [RTR]",
+                      "Amount":  2
+                  },
+                  {
+                      "Card":  "Lightning Bolt [M11]",
+                      "Amount":  1
+                  },
+                  {
+                      "Card":  "Serum Visions  [MM3]",
+                      "Amount":  4
+                  },
+                  {
+                      "Card":  "Thought-Knot Seer [OGW]",
+                      "Amount":  1
+                  }
+              ]
+}
+"@
 
 $TestImportCollectionPath = 'C:\RAZY\Test-Collection.txt'
 $TestImportCollectionName = 'TestCollection'
