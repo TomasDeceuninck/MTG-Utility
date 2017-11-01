@@ -33,7 +33,7 @@ function Get-WishlistCardsInSet {
 	process {
 		$wishlistCardNamesForSet = $Wishlist | Where-Object {(-not $_.Set) -or ($_.Set -eq $Set)} | Select-Object -ExpandProperty Name
 		$Global:MTGDB | Where-Object {$_.Name -in $wishlistCardNamesForSet} | Where-Object {$Set -in $_.printings} | ForEach-Object {
-			[MTGCard]::New($_.Name,$Set)
+			[MTGCard]::New($_.Name, $Set)
 		}
 	}
 	end {

@@ -30,7 +30,7 @@ function Update-Collection {
 			ValueFromPipeline = $true,
 			ValueFromPipelineByPropertyName = $true
 		)]
-		[ValidateScript({$_.IsUniquelyIdentifiable()})]
+		[ValidateScript( {$_.IsUniquelyIdentifiable()})]
 		[MTGCard] $Card,
 		[Parameter(
 			Mandatory = $false,
@@ -45,9 +45,9 @@ function Update-Collection {
 	begin {}
 	process {
 		$collectionItem = $Collection.Get($Card)
-		if($collectionItem){
+		if ($collectionItem) {
 			Write-Host $Card -ForegroundColor Yellow
-			if($collectionItem.Amount -eq 1){
+			if ($collectionItem.Amount -eq 1) {
 				$current = 'You have 1 copy.'
 			} else {
 				$current = ('You have {0} copies.' -f $collectionItem.Amount)
@@ -57,13 +57,13 @@ function Update-Collection {
 			$current = 'You have no copies.'
 		}
 		$add = Read-Host -Prompt ('{0} Add (0 is default): ' -f $current)
-		try{
+		try {
 			$add = [System.Int32]$add
 		} catch [System.Management.Automation.PSInvalidCastException] {
 			$add = 0
 		}
-		$Collection.Add($Card,$add)
-		if($PassThru){
+		$Collection.Add($Card, $add)
+		if ($PassThru) {
 			$Collection
 		}
 	}

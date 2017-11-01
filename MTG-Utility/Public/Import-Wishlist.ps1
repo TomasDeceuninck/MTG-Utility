@@ -18,7 +18,7 @@ function Import-Wishlist {
 		[Parameter(
 			Mandatory = $true
 		)]
-		[ValidateScript({Test-Path $_})]
+		[ValidateScript( {Test-Path $_})]
 		# [ValidateScript({Get-Content -Path $_ | ForEach-Object{$_ -match [regex]$SETTINGS.Files.Wishlist.Pattern}})]
 		[System.String] $Path
 	)
@@ -33,27 +33,27 @@ function Import-Wishlist {
 		$progressCurrent = 0
 		Write-Progress -Activity 'Importing Wishlist' -Status 'Processing' -PercentComplete 0
 		$import | ForEach-Object {
-			Write-Progress -Activity 'Importing Wishlist' -Status ('Processing ({0} of {1})' -f ++$progressCurrent,$progressTotal) -PercentComplete ([Math]::Round(($progressCurrent/$progressTotal)*100)) -CurrentOperation ('{0}' -f $_) -SecondsRemaining (((((Get-Date)-$progressStartTime).TotalSeconds)/$progressCurrent)*($progressTotal-$progressCurrent))
-			if($_ -match [regex]$SETTINGS.Files.Wishlist.Pattern){
+			Write-Progress -Activity 'Importing Wishlist' -Status ('Processing ({0} of {1})' -f ++$progressCurrent, $progressTotal) -PercentComplete ([Math]::Round(($progressCurrent / $progressTotal) * 100)) -CurrentOperation ('{0}' -f $_) -SecondsRemaining (((((Get-Date) - $progressStartTime).TotalSeconds) / $progressCurrent) * ($progressTotal - $progressCurrent))
+			if ($_ -match [regex]$SETTINGS.Files.Wishlist.Pattern) {
 				$Amount = $Matches[1]
 				$Name = $Matches[3].Trim()
 				$Set = $Matches[5]
-				if($Name){
+				if ($Name) {
 					$mtgDBWithName = $Global:MTGDB | Where-Object {$_.Name -like $Name}
-					if($mtgDBWithName){
-						if($Set){
-							if($mtgDBWithName | Where-Object {$Set -in $_.printings}){
-								if($Amount){
-									[MTGWishlistItem]::New($Name,$Amount,$Set)
+					if ($mtgDBWithName) {
+						if ($Set) {
+							if ($mtgDBWithName | Where-Object {$Set -in $_.printings}) {
+								if ($Amount) {
+									[MTGWishlistItem]::New($Name, $Amount, $Set)
 								} else {
-									[MTGWishlistItem]::New($Name,$Set)
+									[MTGWishlistItem]::New($Name, $Set)
 								}
 							} else {
-								throw ('{0} was never printed in {1}' -f $Name,$Set)
+								throw ('{0} was never printed in {1}' -f $Name, $Set)
 							}
 						} else {
-							if($Amount){
-								[MTGWishlistItem]::New($Name,$Amount)
+							if ($Amount) {
+								[MTGWishlistItem]::New($Name, $Amount)
 							} else {
 								[MTGWishlistItem]::New($Name)
 							}

@@ -14,9 +14,9 @@ InModuleScope MTG-Utility {
 			}
 			Mock Import-Wishlist -ParameterFilter {$Path -eq $TestWishlistPath} {
 				return @(
-					[MTGWishlistItem]::New('Lightning Bolt','pMPR')
-					[MTGWishlistItem]::New('Liliana of the Veil',2)
-					[MTGWishlistItem]::New('Serum Visions','MM3')
+					[MTGWishlistItem]::New('Lightning Bolt', 'pMPR')
+					[MTGWishlistItem]::New('Liliana of the Veil', 2)
+					[MTGWishlistItem]::New('Serum Visions', 'MM3')
 					[MTGWishlistItem]::New('Thought-Knot Seer')
 				)
 			}
@@ -42,13 +42,13 @@ InModuleScope MTG-Utility {
 			$SetToTest = 'MM3'
 			$CardsToFind = @('Serum Visions', 'Liliana of the Veil')
 			$wishlist = Get-WishlistCardsInSet -Wishlist (Import-Wishlist -Path $TestWishlistPath) -Set $SetToTest
-			,$wishlist | Should BeOfType 'System.Object[]'
+			, $wishlist | Should BeOfType 'System.Object[]'
 			$wishlist | ForEach-Object {
 				$_.GetType().Name | Should Be 'MTGCard'
 				$_.Name -in $CardsToFind | Should Be $true
 			}
 			$allFound = $true
-			foreach($cardToFind in $CardsToFind){
+			foreach ($cardToFind in $CardsToFind) {
 				if ($cardToFind -notin ($wishlist | Select-Object -ExpandProperty Name)) {
 					$allFound = $false
 				}
