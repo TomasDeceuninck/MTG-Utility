@@ -25,10 +25,6 @@ function Get-OutputPath {
 		[Parameter(
 			Mandatory = $true
 		)]
-		[System.String] $DefaultLocation,
-		[Parameter(
-			Mandatory = $true
-		)]
 		[System.String] $DefaultBaseName,
 		[Parameter(
 			Mandatory = $true
@@ -45,11 +41,11 @@ function Get-OutputPath {
 			if (Test-Path -Path $Path -PathType Container) {
 				# The path is a folder
 				$targetPath = Join-Path $Path $DEFAULTFILENAME
-				if(Test-Path $targetPath){
-					if ($PSCmdlet.ShouldProcess($Path,'Overwrite')){
-						$targetPath = $Path
+				if (Test-Path $targetPath) {
+					if ($PSCmdlet.ShouldProcess($targetPath, 'Overwrite')) {
+						#It can be over writen
 					} else {
-						Write-Error ('Could not write {0} because it already exists' -f $targetPath)
+						throw ('Could not write {0} because it already exists' -f $targetPath)
 						$targetPath = $null
 					}
 				}
@@ -62,42 +58,50 @@ function Get-OutputPath {
 				if ($fileExtension -ne $DefaultExtension) {
 					Write-Warning -Message ('{0} is not a correct extension for this export. {1} will be used.' -f $fileExtension, $DefaultExtension)
 					$targetPath = Join-Path (Split-Path $Path) ($fileBaseName + $DefaultExtension)
-				}
-				if ($PSCmdlet.ShouldProcess($Path,'Overwrite')){
-					$targetPath = $Path
 				} else {
-					$directory = Split-Path $Path
-					Test-Path ($directory){
-						$targetPath = Join-Path $directory $DEFAULTFILENAME
+					$targetPath = $Path
+				}
+				if (Test-Path $targetPath) {
+					# it exists with the correct extension
+					if ($PSCmdlet.ShouldProcess($targetPath, 'Overwrite')) {
+						#It can be over writen
 					} else {
-						$targetPath = Join-Path $DefaultLocation $DEFAULTFILENAME
+						$targetPath = Join-Path (Split-Path $Path) $DEFAULTFILENAME
+						if (Test-Path $targetPath) {
+							throw ('Could not write {0} because it already exists' -f $targetPath)
+							$targetPath = $null
+						} else {
+							# It does not exist and $targetPath is oke
+						}
 					}
+				} else {
+					# It does not exist and $targetPath is oke
 				}
 			}
 		} elseif (Test-Path -Path (Split-Path -Path $Path)) {
 			# The folder it is pointing to exists
 			$fileName = Split-Path -Path $Path -Leaf
-			$fileBaseName = $fileName.substring(0,$fileName.LastIndexOf('.'))
+			$fileBaseName = $fileName.substring(0, $fileName.LastIndexOf('.'))
 			$fileExtension = $fileName.substring($fileName.LastIndexOf('.'))
-			if($fileExtension -eq $DefaultExtension){
+			if ($fileExtension -eq $DefaultExtension) {
 				$targetPath = $Path
 			} else {
 				Write-Warning -Message ('{0} is not a correct extension for this export. {1} will be used.' -f $fileExtension, $DefaultExtension)
 				$targetPath = Join-Path (Split-Path -Path $Path) ($fileBaseName + $DefaultExtension)
-				if(Test-Path $targetPath){
-					if ($PSCmdlet.ShouldProcess($targetPath,'Overwrite')){
+				if (Test-Path $targetPath) {
+					if ($PSCmdlet.ShouldProcess($targetPath, 'Overwrite')) {
 						#It can be over writen
 					} else {
-						if($fileBaseName -eq $DefaultBaseName){
-							Write-Error ('Could not write {0} because it already exists' -f $targetPath)
+						if ($fileBaseName -eq $DefaultBaseName) {
+							throw ('Could not write {0} because it already exists' -f $targetPath)
 							$targetPath = $null
 						} else {
 							$targetPath = $targetPath = Join-Path (Split-Path -Path $Path) $DEFAULTFILENAME
 							if (Test-Path $targetPath) {
-								if ($PSCmdlet.ShouldProcess($targetPath,'Overwrite')){
+								if ($PSCmdlet.ShouldProcess($targetPath, 'Overwrite')) {
 									#It can be over writen
 								} else {
-									Write-Error ('Could not write {0} because it already exists' -f $targetPath)
+									throw ('Could not write {0} because it already exists' -f $targetPath)
 									$targetPath = $null
 								}
 							} else {
@@ -110,7 +114,7 @@ function Get-OutputPath {
 				}
 			}
 		} else {
-			Write-Error 'Incorrect Path'
+			throw 'Incorrect Path'
 		}
 		Write-Output $targetPath
 	}
