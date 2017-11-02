@@ -53,16 +53,7 @@ function Import-Collection {
 									} catch {
 										throw 'Something went wrong casting card parameters'
 									}
-									$mtgDBWithName = $Global:MTGDB | Where-Object {$_.Name -like $Name}
-									if ($mtgDBWithName) {
-										if ($mtgDBWithName | Where-Object {$Set -in $_.printings}) {
-											$collection.Add([MTGCard]::New($Name, $Set), $Amount)
-										} else {
-											throw ('{0} was never printed in {1}' -f $Name, $Set)
-										}
-									} else {
-										throw ('{0} does not exist in MTGDB' -f $Name)
-									}
+									$collection.Add((New-Card -Name $Name -Set $Set),$Amount)
 								}
 							}
 						}

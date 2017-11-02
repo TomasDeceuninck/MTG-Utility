@@ -19,7 +19,6 @@ function Import-Wishlist {
 			Mandatory = $true
 		)]
 		[ValidateScript( {Test-Path $_})]
-		# [ValidateScript({Get-Content -Path $_ | ForEach-Object{$_ -match [regex]$SETTINGS.Files.Wishlist.Pattern}})]
 		[System.String] $Path
 	)
 	begin {
@@ -39,27 +38,15 @@ function Import-Wishlist {
 				$Name = $Matches[3].Trim()
 				$Set = $Matches[5]
 				if ($Name) {
-					$mtgDBWithName = $Global:MTGDB | Where-Object {$_.Name -like $Name}
-					if ($mtgDBWithName) {
-						if ($Set) {
-							if ($mtgDBWithName | Where-Object {$Set -in $_.printings}) {
-								if ($Amount) {
-									[MTGWishlistItem]::New($Name, $Amount, $Set)
-								} else {
-									[MTGWishlistItem]::New($Name, $Set)
-								}
-							} else {
-								throw ('{0} was never printed in {1}' -f $Name, $Set)
-							}
-						} else {
-							if ($Amount) {
-								[MTGWishlistItem]::New($Name, $Amount)
-							} else {
-								[MTGWishlistItem]::New($Name)
-							}
-						}
+					if ($Set) {
+						$card = New-Card -Name $Name -Set $Set
 					} else {
-						throw ('{0} does not exist in MTGDB' -f $Name)
+						$card = New-Card -Name $Name
+					}
+					if ($Amount) {
+						[MTGWishlistItem]::New($card, $Amount)
+					} else {
+						[MTGWishlistItem]::New($card)
 					}
 				} else {
 					throw ('A Name is required for a card. "{0}"' -f $_)

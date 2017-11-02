@@ -44,19 +44,34 @@ function Update-Collection {
 	)
 	begin {}
 	process {
-		$collectionItem = $Collection.Get($Card)
-		if ($collectionItem) {
-			Write-Host $Card -ForegroundColor Yellow
-			if ($collectionItem.Amount -eq 1) {
-				$current = 'You have 1 copy.'
-			} else {
-				$current = ('You have {0} copies.' -f $collectionItem.Amount)
-			}
+		if($Amount){
+			$add = $Amount
 		} else {
-			Write-Host $Card -ForegroundColor Gray
-			$current = 'You have no copies.'
+			cls
+			Write-Host ''
+			Write-Host (" Collection:`t$Collection")
+			Write-Host (" Card:`t`t$Card")
+			Write-Host ' --------------------------------------------'
+			Write-Host ''
+			$outputTemplate = " {0}`t{1}"
+			$collectionItems = $Collection.Get($Card.Name)
+			$notCurrentSet = $collectionItems | Where-Object { $_.Card.Set -ne $Card.Set }
+			$currentSet = $collectionItems | Where-Object { $_.Card.Set -eq $Card.Set }
+			if ($notCurrentSet) {
+				$notCurrentSet | ForEach-Object {
+					Write-Host ($outputTemplate -f $_.Amount,$_.Card) -ForegroundColor Gray
+				}
+			}
+			if($currentSet){
+				$currentSet | ForEach-Object {
+					Write-Host ($outputTemplate -f $_.Amount,$_.Card) -ForegroundColor Yellow
+				}
+			} else {
+				Write-Host ($outputTemplate -f 0,$Card) -ForegroundColor Red
+			}
+			Write-Host ''
+			$add = Read-Host -Prompt ('Add X copies (0 is default): ')
 		}
-		$add = Read-Host -Prompt ('{0} Add (0 is default): ' -f $current)
 		try {
 			$add = [System.Int32]$add
 		} catch [System.Management.Automation.PSInvalidCastException] {

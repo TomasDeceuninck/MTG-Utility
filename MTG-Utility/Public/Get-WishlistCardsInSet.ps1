@@ -31,9 +31,9 @@ function Get-WishlistCardsInSet {
 		Initialize-MTGDB
 	}
 	process {
-		$wishlistCardNamesForSet = $Wishlist | Where-Object {(-not $_.Set) -or ($_.Set -eq $Set)} | Select-Object -ExpandProperty Name
+		$wishlistCardNamesForSet = $Wishlist | Where-Object {(-not $_.Card.Set) -or ($_.Card.Set -eq $Set)} | Select-Object -ExpandProperty Card | Select-Object -ExpandProperty Name
 		$Global:MTGDB | Where-Object {$_.Name -in $wishlistCardNamesForSet} | Where-Object {$Set -in $_.printings} | ForEach-Object {
-			[MTGCard]::New($_.Name, $Set)
+			New-Card -Name $_.Name -Set $Set
 		}
 	}
 	end {

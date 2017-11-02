@@ -97,8 +97,17 @@ Class MTGCollection {
 		$this.Cards = $Cards
 	}
 
-	[MTGCollectionItem[]] Get([MTGCard] $Card) {
-		return $this.Items.Where( {$_.Card.Equals($Card)})
+	[MTGCollectionItem] Get([MTGCard] $Card) {
+		$found = $this.Items.Where( {$_.Card.Equals($Card)})
+		if ($found.Count -gt 1) {
+			throw 'Collection contains multiple entries for the same card'
+		} else {
+			return $found
+		}
+	}
+
+	[MTGCollectionItem[]] Get([System.String] $Name) {
+		return $this.Items.Where( {$_.Card.Name -eq $Name})
 	}
 
 	Add([MTGCard] $Card, [System.Int32] $Amount) {
@@ -149,32 +158,33 @@ Class MTGCollection {
 	RemoveAll() {
 		$this.RemoveAll($false)
 	}
+
+	[System.Int32] TotalAmountOfCards(){
+		$total = 0
+		foreach($item in $this.Items){
+			$total += $item.Amount
+		}
+		return $total
+	}
+
+	[System.String] ToString(){
+		return ('{0} [{1}]' -f $this.Name,$this.TotalAmountOfCards())
+	}
 }
 
 Class MTGWishlistItem {
 	[ValidateNotNullOrEmpty()]
 	[System.Int32] $Amount
 	[ValidateNotNullOrEmpty()]
-	[System.String] $Name
-	[System.String] $Set
+	[MTGCard] $Card
 
 	# Constructor
-	MTGWishlistItem ([System.String] $Name) {
-		$this.Name = $Name
+	MTGWishlistItem ([MTGCard] $Card) {
+		$this.Card = $Card
 		$this.Amount = 1
 	}
-	MTGWishlistItem ([System.String] $Name, [System.String] $Set) {
-		$this.Name = $Name
-		$this.Amount = 1
-		$this.Set = $Set
-	}
-	MTGWishlistItem ([System.String] $Name, [System.Int32] $Amount) {
-		$this.Name = $Name
+	MTGWishlistItem ([MTGCard] $Card, [System.Int32] $Amount) {
+		$this.Card = $Card
 		$this.Amount = $Amount
-	}
-	MTGWishlistItem ([System.String] $Name, [System.Int32] $Amount, [System.String] $Set) {
-		$this.Name = $Name
-		$this.Amount = $Amount
-		$this.Set = $Set
 	}
 }
