@@ -1,7 +1,20 @@
+Enum MTGColorID {
+	White
+	Blue
+	Black
+	Red
+	Green
+	Multicolor
+	Colorless
+	Land
+}
+
 Class MTGCard {
 	[ValidateNotNullOrEmpty()]
 	[System.String] $Name
 	[System.String] $Set
+	[MTGColorID] $ColorID
+	[PSObject[]] $Info
 
 	# Constructor
 	MTGCard ([System.String] $Name) {
@@ -14,6 +27,10 @@ Class MTGCard {
 
 	[System.Boolean] IsUniquelyIdentifiable() {
 		return (![System.String]::IsNullOrEmpty($this.Name) -and ![System.String]::IsNullOrEmpty($this.Set))
+	}
+
+	[System.Boolean] IsInitialized() {
+		return (![System.String]::IsNullOrEmpty($this.Name) -and ![System.String]::IsNullOrEmpty($this.Info) -and ![System.String]::IsNullOrEmpty($this.ColorID))
 	}
 
 	[System.Boolean] Equals($Card) {
