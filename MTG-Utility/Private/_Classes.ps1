@@ -77,28 +77,28 @@ Class MTGCollectionItem {
 Class MTGCollection {
 	[ValidateNotNullOrEmpty()]
 	[System.String] $Name
-	hidden [System.Collections.ArrayList] $Items = $($this | Add-Member ScriptProperty 'Cards' {
+	hidden [System.Collections.ArrayList] $_Items = $($this | Add-Member ScriptProperty 'Items' {
 			# get
-			[MTGCollectionItem[]]$this.Items
+			[MTGCollectionItem[]]$this._Items
 		} {
 			# set
-			param ( $arg )
-			$this.Items = New-Object System.Collections.ArrayList(, $arg)
+			param ( [MTGCollectionItem[]] $arg )
+			$this._Items = New-Object System.Collections.ArrayList(, $arg)
 		}
 	)
 
 	# Constructor
 	MTGCollection ([System.String] $Name) {
 		$this.Name = $Name
-		$this.Items = New-Object System.Collections.ArrayList
+		$this._Items = New-Object System.Collections.ArrayList
 	}
-	MTGCollection ([System.String] $Name, [MTGCollectionItem[]] $Cards) {
+	MTGCollection ([System.String] $Name, [MTGCollectionItem[]] $Items) {
 		$this.Name = $Name
-		$this.Cards = $Cards
+		$this.Items = $Items
 	}
 
 	[MTGCollectionItem] Get([MTGCard] $Card) {
-		$found = $this.Items.Where( {$_.Card.Equals($Card)})
+		$found = $this._Items.Where( {$_.Card.Equals($Card)})
 		if ($found.Count -gt 1) {
 			throw 'Collection contains multiple entries for the same card'
 		} else {
@@ -107,18 +107,18 @@ Class MTGCollection {
 	}
 
 	[MTGCollectionItem[]] Get([System.String] $Name) {
-		return $this.Items.Where( {$_.Card.Name -eq $Name})
+		return $this._Items.Where( {$_.Card.Name -eq $Name})
 	}
 
 	Add([MTGCard] $Card, [System.Int32] $Amount) {
-		$existingItem = $this.Items.Where( {$_.Card.Equals($Card)})
+		$existingItem = $this._Items.Where( {$_.Card.Equals($Card)})
 		$totalAmmount = $Amount
 		foreach ($item in $existingItem) {
 			$totalAmmount += $item.Amount
-			$this.Items.Remove($item)
+			$this._Items.Remove($item)
 		}
 		if ($totalAmmount -gt 0) {
-			$this.Items.Add([MTGCollectionItem]::New($Card, $totalAmmount))
+			$this._Items.Add([MTGCollectionItem]::New($Card, $totalAmmount))
 		}
 	}
 	Add([MTGCard] $Card) {
@@ -126,14 +126,14 @@ Class MTGCollection {
 	}
 
 	Remove([MTGCard] $Card, [System.Int32] $Amount) {
-		$existingItem = $this.Items.Where( {$_.Card.Equals($Card)})
+		$existingItem = $this._Items.Where( {$_.Card.Equals($Card)})
 		$totalAmmount = - $Amount
 		foreach ($item in $existingItem) {
 			$totalAmmount += $item.Amount
-			$this.Items.Remove($item)
+			$this._Items.Remove($item)
 		}
 		if ($totalAmmount -gt 0) {
-			$this.Items.Add([MTGCollectionItem]::New($Card, $totalAmmount))
+			$this._Items.Add([MTGCollectionItem]::New($Card, $totalAmmount))
 		}
 	}
 	Remove([MTGCard] $Card) {
@@ -141,34 +141,35 @@ Class MTGCollection {
 	}
 
 	RemoveAll([MTGCard] $Card) {
-		$existingItem = $this.Items.Where( {$_.Card.Equals($Card)})
+		$existingItem = $this._Items.Where( {$_.Card.Equals($Card)})
 		foreach ($item in $existingItem) {
-			$this.Items.Remove($item)
+			$this._Items.Remove($item)
 		}
 	}
-	RemoveAll([System.Boolean] $Confirm) {
-		if (!$Confirm) {
-			$user = Read-Host -Prompt 'Are you sure you want to remove all cards from this collection? (y/N) '
-			$Confirm = ($user -like 'y')
-		}
-		if ($Confirm) {
-			$this.Items = New-Object System.Collections.ArrayList
-		}
-	}
-	RemoveAll() {
-		$this.RemoveAll($false)
-	}
+	# Remove all does not seem relevant but only dangerous?
+	# RemoveAll([System.Boolean] $Confirm) {
+	# 	if (!$Confirm) {
+	# 		$user = Read-Host -Prompt 'Are you sure you want to remove all cards from this collection? (y/N) '
+	# 		$Confirm = ($user -like 'y')
+	# 	}
+	# 	if ($Confirm) {
+	# 		$this._Items = New-Object System.Collections.ArrayList
+	# 	}
+	# }
+	# RemoveAll() {
+	# 	$this.RemoveAll($false)
+	# }
 
-	[System.Int32] TotalAmountOfCards(){
+	[System.Int32] TotalAmountOfCards() {
 		$total = 0
-		foreach($item in $this.Items){
+		foreach ($item in $this._Items) {
 			$total += $item.Amount
 		}
 		return $total
 	}
 
-	[System.String] ToString(){
-		return ('{0} [{1}]' -f $this.Name,$this.TotalAmountOfCards())
+	[System.String] ToString() {
+		return ('{0} [{1}]' -f $this.Name, $this.TotalAmountOfCards())
 	}
 }
 

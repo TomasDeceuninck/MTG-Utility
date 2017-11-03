@@ -1,6 +1,6 @@
 . $PSScriptRoot\_InitializeTestEnvironment.ps1
 
-Describe "MTG-Utility" {
+Describe "MTG-Utility" -Tags 'Clean' {
 	Context "All required tests are present" {
 		It "Includes a test for each public PowerShell function in the module" {
 			Get-ChildItem -Path $publicFunctions -Filter "*.ps1" -Recurse | Where-Object -FilterScript {$_.Name -notlike '*.Tests.ps1'} | % {

@@ -41,7 +41,7 @@ function Export-Collection {
 			New-Object PSObject -Property @{
 				Version = ([System.Version]$SETTINGS.Files.Collection.CurrentVersion).ToString()
 				Name    = $Collection.Name
-				Cards   = ($Collection.Cards | Select-Object * | Sort-Object Name)
+				Items   = ($Collection.Items | Select-Object * | Sort-Object Name)
 			} | ConvertTo-Json | Out-File -Encoding unicode $outputPath -Force | Out-Null
 			Write-Information -MessageData ('Exported Collection to {0}' -f $outputPath)
 		} else {
