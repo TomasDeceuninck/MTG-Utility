@@ -14,8 +14,8 @@ function Initialize-MTGDB {
 		if (!$Global:MTGSets) {
 			Write-Progress -Activity 'Initializing MTGSets' -Status 'Processing'
 			Set-Variable -Name MTGSets -Scope Global -Value ((Get-Content (Join-Path $MODULEROOT $SETTINGS.Resources.AllSets.Path) | ConvertFrom-Json).psobject.Members | Where-Object {
-				$_.MemberType -eq 'NoteProperty'
-			} | Select-Object -ExpandProperty Value | Select-Object name,code,releaseDate,border)
+					$_.MemberType -eq 'NoteProperty'
+				} | Select-Object -ExpandProperty Value | Select-Object name, code, releaseDate, border)
 			Write-Progress -Activity 'Initializing MTGSets' -Completed
 		}
 	}
