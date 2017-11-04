@@ -31,13 +31,13 @@ function Initialize-Card {
 	begin {}
 	process {
 		# Add Info
-		if(!$Card.Info -or $ReInitialize){
+		if (!$Card.Info -or $ReInitialize) {
 			Initialize-MTGDB
-			$Card.Info = $Global:MTGDB | Where-Object{ $_.Name -eq $Card.Name}
+			$Card.Info = $Global:MTGDB | Where-Object { $_.Name -eq $Card.Name}
 		}
 		# Add ColorID
-		if(!$Card.ColorID -or $ReInitialize) {
-			if($Card.Info.Colors.Count -gt 1){
+		if (!$Card.ColorID -or $ReInitialize) {
+			if ($Card.Info.Colors.Count -gt 1) {
 				$Card.ColorID = [MTGColorID]::Multicolor
 			} elseif ($Card.Info.Colors.Count -eq 1)	{
 				$Card.ColorID = [MTGColorID]::($Card.Info.Colors | Select-Object -First 1)

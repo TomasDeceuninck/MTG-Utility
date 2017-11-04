@@ -1,9 +1,12 @@
 <?xml version="1.0"?>
 <Settings>
 	<Resources>
-		<MTGJson>
+		<AllCards>
 			<Path>\resources\AllCards-x.json</Path>
-		</MTGJson>
+		</AllCards>
+		<AllSets>
+			<Path>\resources\AllSets.json</Path>
+		</AllSets>
 	</Resources>
 	<Files>
 		<Wishlist>

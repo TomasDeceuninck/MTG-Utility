@@ -44,7 +44,7 @@ function Update-Collection {
 	)
 	begin {}
 	process {
-		if($Amount){
+		if ($Amount) {
 			$add = $Amount
 		} else {
 			cls
@@ -59,15 +59,15 @@ function Update-Collection {
 			$currentSet = $collectionItems | Where-Object { $_.Card.Set -eq $Card.Set }
 			if ($notCurrentSet) {
 				$notCurrentSet | ForEach-Object {
-					Write-Host ($outputTemplate -f $_.Amount,$_.Card) -ForegroundColor Gray
+					Write-Host ($outputTemplate -f $_.Amount, $_.Card) -ForegroundColor Gray
 				}
 			}
-			if($currentSet){
+			if ($currentSet) {
 				$currentSet | ForEach-Object {
-					Write-Host ($outputTemplate -f $_.Amount,$_.Card) -ForegroundColor Yellow
+					Write-Host ($outputTemplate -f $_.Amount, $_.Card) -ForegroundColor Yellow
 				}
 			} else {
-				Write-Host ($outputTemplate -f 0,$Card) -ForegroundColor Red
+				Write-Host ($outputTemplate -f 0, $Card) -ForegroundColor Red
 			}
 			Write-Host ''
 			$add = Read-Host -Prompt ('Add X copies (0 is default): ')
