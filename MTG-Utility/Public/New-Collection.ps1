@@ -40,6 +40,7 @@ function New-Collection {
 		if ($Cards) {
 			$collection = [MTGCollection]::New($Name)
 			$Cards | ForEach-Object { $collection.Add($_) }
+			$collection
 		} elseif ($Items) {
 			[MTGCollection]::New($Name, $Items)
 		} else {

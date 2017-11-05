@@ -50,7 +50,9 @@ function Update-Collection {
 			cls
 			Write-Host ''
 			Write-Host (" Collection:`t$Collection")
-			Write-Host (" Card:`t`t$Card")
+			Write-Host (" Set:`t`t{0}" -f $Card.Set)
+			Write-Host (" Color:`t`t{0}" -f $Card.ColorID)
+			Write-Host (" Card:`t`t{0}" -f $Card.Name)
 			Write-Host ' --------------------------------------------'
 			Write-Host ''
 			$outputTemplate = " {0}`t{1}"
